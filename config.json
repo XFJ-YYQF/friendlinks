@@ -1,0 +1,20 @@
+[
+  {
+    "name": "test1",
+    "url": "https://example.com/test1",
+    "slogan": "test1",
+    "icon": "test1.png"
+  },
+  {
+    "name": "test2",
+    "url": "https://example.com/test2",
+    "slogan": "test2",
+    "icon": "test2.jpg"
+  },
+  {
+    "name": "test3",
+    "url": "https://example.com/test3",
+    "slogan": "test3",
+    "icon": "test3.png"
+  }
+]
