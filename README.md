@@ -1,0 +1,2 @@
+# friendlinks
+友链
