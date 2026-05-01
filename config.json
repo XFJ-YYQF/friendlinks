@@ -1,44 +1,44 @@
 [
   {
-    "name": "test1",
-    "url": "https://example.com/test1",
-    "slogan": "test1",
-    "icon": "test1.png"
+    "name": "XFJの主页✨",
+    "url": "https://minecraftxfj.top",
+    "slogan": "我永远喜欢哈次捏米库！！！",
+    "icon": "XFJ.webp"
   },
   {
     "name": "ZCMのMIKU",
     "url": "http://zcmmiku.top",
     "slogan": "我趣，初音未来！",
-    "icon": "test2.jpg"
+    "icon": "ZCM.webp"
   },
   {
     "name": "高中笔记",
     "url": "https://classnote.top/",
     "slogan": "哦吼吼真的很不错捏！！！",
-    "icon": "test3.png"
+    "icon": "book.webp"
   },
   {
     "name": "如笙の小站",
     "url": "https://blog.hkdbbq.cn",
     "slogan": "「人生如梦 不过三六」",
-    "icon": "test3.png"
+    "icon": "hkdbbg.webp"
   },
   {
     "name": "夜影、的小站",
     "url": "https://1224hj.top",
     "slogan": "君子藏器于身，待时而动。",
-    "icon": "test3.png"
+    "icon": "nightshadow.webp"
   },
   {
     "name": "wyf9's Blog",
     "url": "https://wyf9.top",
     "slogan": "什么都有的个人 blog?",
-    "icon": "test3.png"
+    "icon": "https://wyf9.top/favicon.png"
   },
   {
     "name": "mxd's Planet",
     "url": "https://www.mxdyeah.com/?ref=minecraftxfj.top",
     "slogan": "Empowered by technology, inspired by life.",
-    "icon": "test3.png"
+    "icon": "mxd.webp"
   }
 ]
