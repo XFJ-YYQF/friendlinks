@@ -96,9 +96,16 @@ header h1 {
     font-size: 0.875rem;
     color: var(--text-muted);
     display: -webkit-box;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 2; /* 默认只显示2行 */
     -webkit-box-orient: vertical;
     overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+/* 当鼠标悬停在卡片上时，显示全部内容 */
+.friend-card:hover .friend-slogan {
+    -webkit-line-clamp: unset; /* 取消行数限制 */
+    display: block; /* 切换回普通块级显示 */
 }
 
 .loading, .error {
