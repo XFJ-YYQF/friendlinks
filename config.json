@@ -6,15 +6,39 @@
     "icon": "test1.png"
   },
   {
-    "name": "test2",
-    "url": "https://example.com/test2",
-    "slogan": "test2",
+    "name": "ZCMのMIKU",
+    "url": "http://zcmmiku.top",
+    "slogan": "我趣，初音未来！",
     "icon": "test2.jpg"
   },
   {
-    "name": "test3",
-    "url": "https://example.com/test3",
-    "slogan": "test3",
+    "name": "高中笔记",
+    "url": "https://classnote.top/",
+    "slogan": "哦吼吼真的很不错捏！！！",
+    "icon": "test3.png"
+  },
+  {
+    "name": "如笙の小站",
+    "url": "https://blog.hkdbbq.cn",
+    "slogan": "「人生如梦 不过三六」",
+    "icon": "test3.png"
+  },
+  {
+    "name": "夜影、的小站",
+    "url": "https://1224hj.top",
+    "slogan": "君子藏器于身，待时而动。",
+    "icon": "test3.png"
+  },
+  {
+    "name": "wyf9's Blog",
+    "url": "https://wyf9.top",
+    "slogan": "什么都有的个人 blog?",
+    "icon": "test3.png"
+  },
+  {
+    "name": "mxd's Planet",
+    "url": "https://www.mxdyeah.com/?ref=minecraftxfj.top",
+    "slogan": "Empowered by technology, inspired by life.",
     "icon": "test3.png"
   }
 ]
