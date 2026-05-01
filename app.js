@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const grid = document.getElementById('friends-grid');
 
-    // 获取配置文件
     fetch('config.json')
         .then(response => {
             if (!response.ok) {
@@ -10,7 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return response.json();
         })
         .then(data => {
-            // 清空"加载中"的提示
             grid.innerHTML = '';
             
             if (data.length === 0) {
@@ -18,16 +16,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // 渲染卡片
             data.forEach(friend => {
                 const card = document.createElement('a');
                 card.className = 'friend-card';
                 card.href = friend.url;
-                card.target = '_blank'; // 新标签页打开
-                card.rel = 'noopener noreferrer'; // 安全属性
+                card.target = '_blank';
+                card.rel = 'noopener noreferrer';
 
-                // 构建图片路径，默认去 assets 文件夹找
-                const imgPath = friend.icon ? `assets/${friend.icon}` : 'assets/default.png';
+                let imgPath = 'assets/default.png';
+                if (friend.icon) {
+                    if (friend.icon.startsWith('http')) {
+                        imgPath = friend.icon;
+                    } else {
+                        imgPath = `assets/${friend.icon}`;
+                    }
+                }
 
                 card.innerHTML = `
                     <img src="${imgPath}" alt="${friend.name}" class="friend-avatar" onerror="this.src='assets/default.png'">
@@ -42,6 +45,6 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .catch(error => {
             console.error('Error:', error);
-            grid.innerHTML = '<div class="error">无法加载小伙伴的信号，请检查 config.json 是否配置正确。</div>';
+            grid.innerHTML = '<div class="error">请检查 config.json 是否配置正确</div>';
         });
 });
