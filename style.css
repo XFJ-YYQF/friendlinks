@@ -114,3 +114,21 @@ footer {
     color: var(--text-muted);
     font-size: 0.9rem;
 }
+
+.powered-by {
+    margin-top: 8px;
+    font-size: 0.8rem;
+    color: #9ca3af; /* 稍微再浅一点的灰色 */
+}
+
+.powered-by a {
+    color: var(--accent-color); /* 使用你定义的蓝色 */
+    text-decoration: none;
+    font-weight: 500;
+    transition: opacity 0.2s;
+}
+
+.powered-by a:hover {
+    text-decoration: underline;
+    opacity: 0.8;
+}
