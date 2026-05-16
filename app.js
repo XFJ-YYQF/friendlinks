@@ -2,36 +2,28 @@ document.addEventListener('DOMContentLoaded', () => {
     const grid = document.getElementById('friends-grid');
     const hitokotoElement = document.getElementById('hitokoto-text');
 
-    // --- 获取随机一言逻辑 ---
+    // 获取随机一言
     function fetchHitokoto() {
         fetch('https://v1.hitokoto.cn')
             .then(response => response.json())
             .then(data => {
-                // 将接口返回的句子写入页面
                 hitokotoElement.innerText = data.hitokoto;
             })
             .catch(error => {
                 console.error('一言获取失败:', error);
-                // 如果 API 挂了或者网络不好，就显示保底的默认文案
                 hitokotoElement.innerText = '那些与我交换了宇宙坐标的有趣灵魂。';
             });
     }
-
-    // 执行获取一言
     fetchHitokoto();
-    // ---------------------------------
 
-    // --- 以下是原本的友链渲染逻辑 ---
+    // 加载友链配置
     fetch('config.json')
         .then(response => {
-            if (!response.ok) {
-                throw new Error('配置文件加载失败');
-            }
+            if (!response.ok) throw new Error('配置文件加载失败');
             return response.json();
         })
         .then(data => {
             grid.innerHTML = '';
-            
             if (data.length === 0) {
                 grid.innerHTML = '<div class="error">暂无友链数据。</div>';
                 return;
@@ -60,12 +52,33 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="friend-slogan" title="${friend.slogan}">${friend.slogan}</div>
                     </div>
                 `;
-                
                 grid.appendChild(card);
             });
         })
         .catch(error => {
             console.error('Error:', error);
-            grid.innerHTML = '<div class="error">请检查 config.json 是否配置正确。</div>';
+            grid.innerHTML = '<div class="error">请检查 config.json 是否配置正确</div>';
         });
+
+    // 弹窗控制逻辑
+    const modal = document.getElementById('apply-modal');
+    const applyBtn = document.getElementById('apply-btn');
+    const closeBtn = document.querySelector('.close-btn');
+
+    // 点击申请按钮打开弹窗
+    applyBtn.addEventListener('click', () => {
+        modal.classList.add('show');
+    });
+
+    // 点击叉叉关闭弹窗
+    closeBtn.addEventListener('click', () => {
+        modal.classList.remove('show');
+    });
+
+    // 点击弹窗外部背景也关闭弹窗
+    window.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            modal.classList.remove('show');
+        }
+    });
 });
