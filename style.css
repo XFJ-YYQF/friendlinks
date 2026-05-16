@@ -293,6 +293,7 @@ footer {
     }
 }
 
+
 /* ===== 连通性状态点 ===== */
 .friend-meta {
     display: flex;
@@ -309,17 +310,26 @@ footer {
     flex-shrink: 0;
 }
 
+/* 绿：在线 */
 .status-dot.online {
     background-color: #22c55e;
     box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25);
     animation: pulse-green 2.5s ease-in-out infinite;
 }
 
+/* 红：离线 */
 .status-dot.offline {
     background-color: #ef4444;
     box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
 }
 
+/* 黄：HTTP站点，HTTPS页面无法检测 */
+.status-dot.http-only {
+    background-color: #f59e0b;
+    box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
+}
+
+/* 灰：检测中 */
 .status-dot.pending {
     background-color: #9ca3af;
     animation: pulse-gray 1.2s ease-in-out infinite;
@@ -348,7 +358,6 @@ footer {
         var(--card-bg) 0%,
         color-mix(in srgb, var(--accent-color) 6%, var(--card-bg)) 100%
     );
-    order: -1; /* 即使 DOM 顺序改变也永远排第一 */
 }
 
 .owner-badge {

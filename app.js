@@ -17,43 +17,64 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchHitokoto();
 
     /**
-     * 检测目标 URL 是否可达。
-     * 使用 fetch no-cors 模式：网站在线时返回 opaque 响应（视为成功），
-     * 彻底宕机或 DNS 解析失败时抛出网络错误（视为失败）。
-     * 5 秒超时后自动判定为离线。
+     * 检测目标 URL 是否可达，返回三种状态：
+     *   true       → 在线（绿点）
+     *   false      → 离线/超时（红点）
+     *   'http-only' → HTTP站点，HTTPS页面无法检测（黄点）
+     *
+     * 针对 http:// 链接：先自动升级到 https:// 尝试，
+     * 若 HTTPS 通了则为绿，若超时/失败则为黄（而非红，
+     * 因为混合内容拦截不等于网站挂了）。
      */
     function checkConnectivity(url) {
         return new Promise((resolve) => {
-            const controller = new AbortController();
-            const timer = setTimeout(() => {
-                controller.abort();
-                resolve(false);
-            }, 5000);
+            const isHttp = url.startsWith('http://');
 
-            fetch(url, {
-                method: 'GET',
-                mode: 'no-cors',
-                cache: 'no-store',
-                signal: controller.signal
-            })
-            .then(() => {
-                clearTimeout(timer);
-                resolve(true);
-            })
-            .catch(() => {
-                clearTimeout(timer);
-                resolve(false);
-            });
+            function tryFetch(targetUrl, onSuccess, onFail) {
+                const controller = new AbortController();
+                const timer = setTimeout(() => {
+                    controller.abort();
+                    onFail();
+                }, 5000);
+                fetch(targetUrl, {
+                    method: 'GET',
+                    mode: 'no-cors',
+                    cache: 'no-store',
+                    signal: controller.signal
+                })
+                .then(() => { clearTimeout(timer); onSuccess(); })
+                .catch(() => { clearTimeout(timer); onFail(); });
+            }
+
+            if (isHttp) {
+                // 先尝试 HTTPS 升级版本
+                const httpsUrl = url.replace('http://', 'https://');
+                tryFetch(
+                    httpsUrl,
+                    () => resolve(true),           // HTTPS 通了 → 绿
+                    () => resolve('http-only')      // HTTPS 也不通 → 黄（HTTP站点，无法从HTTPS页检测）
+                );
+            } else {
+                tryFetch(
+                    url,
+                    () => resolve(true),
+                    () => resolve(false)
+                );
+            }
         });
     }
 
-    /**
-     * 渲染单张友链卡片。
-     * isOwner：是否为站长主页（展示置顶标记）
-     * isOnline：连通性检测结果（决定绿点/红点）
-     * isPending：还在检测中（展示灰色动态点）
-     */
-    function createCard(friend, isOnline, isPending) {
+    // status: true | false | 'http-only' | 'pending'
+    function getStatusConfig(status) {
+        switch (status) {
+            case true:        return { dotClass: 'online',    label: '可访问 ✓' };
+            case false:       return { dotClass: 'offline',   label: '暂时无法访问' };
+            case 'http-only': return { dotClass: 'http-only', label: 'HTTP 站点' };
+            default:          return { dotClass: 'pending',   label: '检测中...' };
+        }
+    }
+
+    function createCard(friend, status) {
         const card = document.createElement('a');
         card.className = 'friend-card';
         card.href = friend.url;
@@ -66,9 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
             imgPath = friend.icon.startsWith('http') ? friend.icon : `assets/${friend.icon}`;
         }
 
-        // 状态点 class
-        let dotClass = isPending ? 'status-dot pending' : (isOnline ? 'status-dot online' : 'status-dot offline');
-        let dotTitle = isPending ? '检测中...' : (isOnline ? '可访问 ✓' : '暂时无法访问');
+        const { dotClass, label } = getStatusConfig(status);
 
         card.innerHTML = `
             <img src="${imgPath}" alt="${friend.name}" class="friend-avatar" onerror="this.src='assets/default.png'">
@@ -79,15 +98,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div class="friend-slogan" title="${friend.slogan}">${friend.slogan}</div>
                 <div class="friend-meta">
-                    <span class="${dotClass}" title="${dotTitle}"></span>
-                    <span class="status-label">${dotTitle}</span>
+                    <span class="status-dot ${dotClass}"></span>
+                    <span class="status-label">${label}</span>
                 </div>
             </div>
         `;
         return card;
     }
 
-    // 加载友链配置，并发检测连通性，排序后渲染
     fetch('config.json')
         .then(response => {
             if (!response.ok) throw new Error('配置文件加载失败');
@@ -99,36 +117,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // 先渲染占位骨架（全部灰点 pending 状态），让页面立即有内容
+            // 先渲染 pending 占位卡片
             grid.innerHTML = '';
-            const cardMap = new Map(); // url -> DOM element
-            data.forEach(friend => {
-                const card = createCard(friend, false, true);
-                cardMap.set(friend.url, card);
-                grid.appendChild(card);
-            });
+            data.forEach(friend => grid.appendChild(createCard(friend, 'pending')));
 
-            // 并发检测所有连通性
+            // 并发检测
             const checks = data.map(friend => {
                 if (friend.isOwner) {
-                    // 站长主页不检测，直接视为在线
-                    return Promise.resolve({ friend, isOnline: true });
+                    return Promise.resolve({ friend, status: true });
                 }
-                return checkConnectivity(friend.url).then(isOnline => ({ friend, isOnline }));
+                return checkConnectivity(friend.url).then(status => ({ friend, status }));
             });
 
             Promise.all(checks).then(results => {
-                // 排序：站长置顶 → 在线 → 离线
+                // 排序：站长置顶 → 在线(true) → HTTP站点('http-only') → 离线(false)
+                const order = { true: 0, 'http-only': 1, false: 2 };
                 results.sort((a, b) => {
                     if (a.friend.isOwner) return -1;
                     if (b.friend.isOwner) return 1;
-                    return (b.isOnline ? 1 : 0) - (a.isOnline ? 1 : 0);
+                    return (order[a.status] ?? 1) - (order[b.status] ?? 1);
                 });
 
-                // 清空并按排序结果重新渲染（已有检测结果，去掉 pending 状态）
                 grid.innerHTML = '';
-                results.forEach(({ friend, isOnline }) => {
-                    grid.appendChild(createCard(friend, isOnline, false));
+                results.forEach(({ friend, status }) => {
+                    grid.appendChild(createCard(friend, status));
                 });
             });
         })
@@ -142,17 +154,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const applyBtn = document.getElementById('apply-btn');
     const closeBtn = document.querySelector('.close-btn');
 
-    applyBtn.addEventListener('click', () => {
-        modal.classList.add('show');
-    });
-
-    closeBtn.addEventListener('click', () => {
-        modal.classList.remove('show');
-    });
-
-    window.addEventListener('click', (event) => {
-        if (event.target === modal) {
-            modal.classList.remove('show');
-        }
+    applyBtn.addEventListener('click', () => modal.classList.add('show'));
+    closeBtn.addEventListener('click', () => modal.classList.remove('show'));
+    window.addEventListener('click', (e) => {
+        if (e.target === modal) modal.classList.remove('show');
     });
 });
