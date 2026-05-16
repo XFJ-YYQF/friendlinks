@@ -67,8 +67,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // status: true | false | 'http-only' | 'pending'
     function getStatusConfig(status) {
         switch (status) {
-            case true:        return { dotClass: 'online',    label: '可访问 ✓' };
-            case false:       return { dotClass: 'offline',   label: '暂时无法访问' };
+            case true:        return { dotClass: 'online',    label: '可访问' };
+            case false:       return { dotClass: 'offline',   label: '无法访问' };
             case 'http-only': return { dotClass: 'http-only', label: 'HTTP 站点' };
             default:          return { dotClass: 'pending',   label: '检测中...' };
         }
