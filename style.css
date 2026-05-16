@@ -93,9 +93,9 @@ header h1 {
 }
 
 .btn-outline:hover {
-    background-color: var(--card-bg);
-    border-color: var(--accent-color);
-    color: var(--accent-color);
+    opacity: 0.9;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 /* 卡片网格 */
