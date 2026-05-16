@@ -50,14 +50,6 @@ header {
     margin-bottom: 50px;
 }
 
-.title-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    margin-bottom: 12px;
-}
-
 header h1 {
     font-size: 2rem;
     font-weight: 700;
@@ -155,7 +147,7 @@ header h1 {
     text-overflow: ellipsis;
 }
 
-/* 友链简介（悬停展开版） */
+/* 友链简介 */
 .friend-slogan {
     font-size: 0.875rem;
     color: var(--text-muted);
@@ -187,6 +179,10 @@ footer {
 }
 
 .footer-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
     margin-bottom: 24px;
 }
 
@@ -275,17 +271,22 @@ footer {
         padding: 30px 15px;
     }
     
-    .title-wrapper {
-        flex-direction: column; /* 手机上标题和按钮上下排列 */
-        gap: 10px;
-    }
-    
     header h1 {
         font-size: 1.7rem;
     }
     
     .friends-grid {
-        grid-template-columns: 1fr; /* 手机上单列显示卡片 */
+        grid-template-columns: 1fr;
         gap: 16px;
+    }
+    
+    .footer-actions {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .footer-actions .btn {
+        width: 100%;
+        max-width: 250px;
     }
 }
