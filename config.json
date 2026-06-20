@@ -50,8 +50,14 @@
   },
   {
     "name": "Smirnova Oyama",
-    "url": "https://mahiro.uk/",
+    "url": "https://mahiro.uk",
     "slogan": "一个本科计算机学生",
     "icon": "https://mahiro.uk/content/nekoxun.jpg"
+  },
+  {
+    "name": "Nekro’s SEKAI",
+    "url": "https://www.nekro.top",
+    "slogan": "どんな結末がお望みだい",
+    "icon": "https://avatars.githubusercontent.com/u/90670998?v=4"
   }
 ]
