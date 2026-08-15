@@ -49,9 +49,9 @@ a, button { -webkit-tap-highlight-color: transparent; }
 
 /* ── Layout shell ── */
 .page {
-    max-width: 900px;
+    max-width: 1600px;
     margin: 0 auto;
-    padding: clamp(40px, 8vw, 76px) 24px 56px;
+    padding: clamp(28px, 5vw, 56px) clamp(20px, 4vw, 48px) 56px;
 }
 
 /* ── Stagger fade-in (driven by --i custom property) ── */
@@ -71,8 +71,16 @@ a, button { -webkit-tap-highlight-color: transparent; }
     html { scroll-behavior: auto; }
 }
 
-/* ── Header ── */
-header { text-align: center; margin-bottom: 8px; }
+/* ── Header / top bar (hugs the top-right corner) ── */
+.topbar {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    text-align: right;
+    margin-bottom: 8px;
+    margin-left: auto;
+    max-width: 460px;
+}
 
 .eyebrow {
     font-size: 11px;
@@ -83,20 +91,19 @@ header { text-align: center; margin-bottom: 8px; }
     margin-bottom: 14px;
 }
 
-header h1 {
+.topbar h1 {
     font-family: 'Baloo 2', 'Noto Sans SC', sans-serif;
-    font-size: clamp(1.8rem, 5vw, 2.2rem);
+    font-size: clamp(1.6rem, 4vw, 2rem);
     font-weight: 700;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
 }
 
 .h1-sub { color: var(--muted); font-weight: 500; }
 
 .subtitle {
     color: var(--muted);
-    font-size: 1.05rem;
-    max-width: 480px;
-    margin: 0 auto;
+    font-size: .95rem;
+    max-width: 400px;
 }
 
 /* ── Rule & section label ── */
@@ -157,11 +164,12 @@ hr {
     background-color: var(--hover-bg);
 }
 
-/* ── Cards grid ── */
+/* ── Cards grid (auto-spreads with viewport width) ── */
 .friends-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: clamp(12px, 1.6vw, 20px);
+    width: 100%;
 }
 
 .friend-card {
@@ -467,7 +475,14 @@ footer {
     .footer-actions .btn { width: 100%; max-width: 250px; }
 }
 
+@media (max-width: 560px) {
+    .topbar { max-width: 100%; }
+    .subtitle { max-width: 100%; }
+}
+
 @media (max-width: 380px) {
-    .page { padding-left: 18px; padding-right: 18px; }
-    hr { margin: 28px 0 20px; }
+    .page { padding-left: 16px; padding-right: 16px; }
+    hr { margin: 24px 0 18px; }
+    .friend-card { padding: 16px; }
+    .friend-avatar { width: 48px; height: 48px; margin-right: 12px; }
 }
