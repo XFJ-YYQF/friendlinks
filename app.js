@@ -74,12 +74,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function createCard(friend, status) {
+    function createCard(friend, status, index) {
         const card = document.createElement('a');
         card.className = 'friend-card';
         card.href = friend.url;
         card.target = '_blank';
         card.rel = 'noopener noreferrer';
+        card.style.setProperty('--i', index);
         if (friend.isOwner) card.classList.add('owner-card');
 
         let imgPath = 'assets/default.png';
@@ -119,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // 先渲染 pending 占位卡片
             grid.innerHTML = '';
-            data.forEach(friend => grid.appendChild(createCard(friend, 'pending')));
+            data.forEach((friend, index) => grid.appendChild(createCard(friend, 'pending', index)));
 
             // 并发检测
             const checks = data.map(friend => {
@@ -139,8 +140,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 grid.innerHTML = '';
-                results.forEach(({ friend, status }) => {
-                    grid.appendChild(createCard(friend, status));
+                results.forEach(({ friend, status }, index) => {
+                    grid.appendChild(createCard(friend, status, index));
                 });
             });
         })
