@@ -2,30 +2,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const grid = document.getElementById('friends-grid');
     const hitokotoElement = document.getElementById('hitokoto-text');
 
-    // 转义 HTML 特殊字符，防止 config.json 中的外部投稿（name/slogan/icon）
-    // 被当作 HTML/属性注入，造成存储型 XSS
-    function escapeHtml(str) {
-        return String(str ?? '').replace(/[&<>"']/g, (c) => ({
-            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-        }[c]));
-    }
-
-    // 仅允许 http/https 协议的链接，拦截 javascript: 等危险协议
-    function safeUrl(url) {
-        try {
-            const u = new URL(String(url), window.location.href);
-            return (u.protocol === 'http:' || u.protocol === 'https:') ? u.href : '#';
-        } catch {
-            return '#';
-        }
-    }
-
-    // 获取随机一言
+    // 获取随机一言（来自本站自建的金句录 API，仿一言接口设计）
+    // max_length=40 让它更适合放在 slogan 位置，不会太长换行
     function fetchHitokoto() {
-        fetch('https://v1.hitokoto.cn')
-            .then(response => response.json())
+        fetch('https://gsc.minecraftxfj.top/api/hitokoto?max_length=40')
+            .then(response => {
+                if (!response.ok) throw new Error('hitokoto api error');
+                return response.json();
+            })
             .then(data => {
-                hitokotoElement.innerText = data.hitokoto;
+                hitokotoElement.innerText = data.text;
             })
             .catch(error => {
                 console.error('一言获取失败:', error);
@@ -95,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function createCard(friend, status, index) {
         const card = document.createElement('a');
         card.className = 'friend-card';
-        card.href = safeUrl(friend.url);
+        card.href = friend.url;
         card.target = '_blank';
         card.rel = 'noopener noreferrer';
         card.style.setProperty('--i', index);
@@ -103,35 +89,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let imgPath = 'assets/default.png';
         if (friend.icon) {
-            imgPath = friend.icon.startsWith('http')
-                ? safeUrl(friend.icon)
-                : `assets/${String(friend.icon).replace(/[^a-zA-Z0-9._-]/g, '')}`;
+            imgPath = friend.icon.startsWith('http') ? friend.icon : `assets/${friend.icon}`;
         }
 
         const { dotClass, label } = getStatusConfig(status);
-        const safeName = escapeHtml(friend.name);
-        const safeSlogan = escapeHtml(friend.slogan);
 
         card.innerHTML = `
-            <img src="${escapeHtml(imgPath)}" alt="${safeName}" class="friend-avatar" width="56" height="56" loading="lazy" decoding="async">
+            <img src="${imgPath}" alt="${friend.name}" class="friend-avatar" onerror="this.src='assets/default.png'">
             <div class="friend-info">
                 <div class="friend-name">
                     ${friend.isOwner ? '<span class="owner-badge">站长</span>' : ''}
-                    ${safeName}
+                    ${friend.name}
                 </div>
-                <div class="friend-slogan" title="${safeSlogan}">${safeSlogan}</div>
+                <div class="friend-slogan" title="${friend.slogan}">${friend.slogan}</div>
                 <div class="friend-meta">
                     <span class="status-dot ${dotClass}"></span>
                     <span class="status-label">${label}</span>
                 </div>
             </div>
         `;
-
-        // 图片加载失败时回退默认头像（用 JS 绑定而非内联 onerror，
-        // 以配合严格的 CSP script-src 'self' 策略）
-        const img = card.querySelector('img');
-        img.addEventListener('error', () => { img.src = 'assets/default.png'; }, { once: true });
-
         return card;
     }
 
