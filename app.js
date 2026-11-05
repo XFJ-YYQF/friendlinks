@@ -2,12 +2,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const grid = document.getElementById('friends-grid');
     const hitokotoElement = document.getElementById('hitokoto-text');
 
-    // 获取随机一言
+    // 获取随机一言（来自本站自建的金句录 API，仿一言接口设计）
+    // max_length=40 让它更适合放在 slogan 位置，不会太长换行
     function fetchHitokoto() {
-        fetch('https://v1.hitokoto.cn')
-            .then(response => response.json())
+        fetch('https://gsc.minecraftxfj.top/api/hitokoto?max_length=40')
+            .then(response => {
+                if (!response.ok) throw new Error('hitokoto api error');
+                return response.json();
+            })
             .then(data => {
-                hitokotoElement.innerText = data.hitokoto;
+                hitokotoElement.innerText = data.text;
             })
             .catch(error => {
                 console.error('一言获取失败:', error);
