@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 获取随机一言（来自本站自建的金句录 API，仿一言接口设计）
     // max_length=40 让它更适合放在 slogan 位置，不会太长换行
     function fetchHitokoto() {
-        fetch('https://gsc.minecraftxfj.top/api/hitokoto?max_length=40')
+        fetch('https://gsc.sakurasnow.cn/api/hitokoto?max_length=40')
             .then(response => {
                 if (!response.ok) throw new Error('hitokoto api error');
                 return response.json();
